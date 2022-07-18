@@ -8,29 +8,32 @@ public class Graph {
         for (int i = 0; i < sideLength*sideLength; i++){
             Node node = new Node();
             graph.Add(node);
+            node.num = i;
         }
-        for (int i = 0; i < graph.Count; i++){
-            List<Node> neighboursList = new List<Node>();
+        foreach (Node node in graph){
+            node.ResetMyNeighboursList(node.num, sideLength, graph);
 
-            if(i + sideLength < sideLength * sideLength){
-                neighboursList.Add(graph[i + sideLength] );
-            }
-            if(i - sideLength > 0){
-                neighboursList.Add(graph[i - sideLength]);
-            }
-            if(i + 1 < sideLength * sideLength && i % sideLength != sideLength - 1){
-                neighboursList.Add(graph[i + 1]);
-            }
-            if(i - 1 > 0 && i % sideLength != 0){
-                neighboursList.Add(graph[i - 1]);
-            }
+            int row = (node.num - (node.num % sideLength))/sideLength;
+            int col = node.num % sideLength;
 
-            int row = (i - (i % sideLength))/sideLength;
-            int col = i % sideLength;
-
-            graph[i].position = new Vector3(col, 0, row);
-            graph[i].neighboursList = neighboursList;
-            graph[i].num = i;
+            graph[node.num].position = new Vector3(col, 0, row);
+            // graph[i].neighboursList = neighboursList;
+            graph[node.num].num = node.num;
         }      
+    }
+
+    public int Evaluate(Vector3 applePos, List<Node> snakeNodes){
+        // int travesability; 
+        // for (int i = 0; i < 10; i++){
+        //     float x = Random.Range(0, 30);
+        //     float y = Random.Range(0, 30);
+            
+        //     for(int w = 0; w < snakeNodes.Count; w++){
+        //         if(snakeNodes[i].position.x != x && snakeNodes[i].position.z != y){
+        //             Snake.UpdateGraph();
+        //         }
+        //     }
+        // }
+        return 0;
     }
 }

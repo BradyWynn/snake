@@ -6,7 +6,7 @@ public class Astar {
     // much of the code below is adapted from the sudo code
     // presented in this video https://www.youtube.com/watch?v=mZfyt03LDH4
     // GraphTwo graph = new GraphTwo(9);
-    public List<Node> FindPath(Node start, Node end){
+    public static List<Node> FindPath(Node start, Node end){
         List<Node> open = new List<Node>();
         List<Node> closed = new List<Node>();
         open.Add(start);
@@ -49,7 +49,7 @@ public class Astar {
         return null;
     }
 
-    List<Node> Backtrack(Node _start, Node _end){
+    static List<Node> Backtrack(Node _start, Node _end){
         List<Node> path = new List<Node>();
         Node _current = _end;
 
@@ -66,7 +66,7 @@ public class Astar {
         return path;
     }
 
-    int GetDistance(Node A, Node B){
+    static int GetDistance(Node A, Node B){
         int x = Mathf.Abs((int)B.position.x - (int)A.position.x);
         int y = Mathf.Abs((int)B.position.z - (int)A.position.z);
         return x + (y);
