@@ -6,7 +6,8 @@ public class Astar {
     // much of the code below is adapted from the sudo code
     // presented in this video https://www.youtube.com/watch?v=mZfyt03LDH4
     // GraphTwo graph = new GraphTwo(9);
-    public static List<Node> FindPath(Node start, Node end){
+    public static List<List<Node>> FindPath(Node start, Node end){
+        List<List<Node>> pathList = new List<List<Node>>();
         List<Node> open = new List<Node>();
         List<Node> closed = new List<Node>();
         open.Add(start);
@@ -22,9 +23,18 @@ public class Astar {
             closed.Add(current);
 
             // check if at end
+            // if(current == end){
+            //     List<Node> path = Backtrack(start, end);
+            //     return path;
+            // }
+
             if(current == end){
                 List<Node> path = Backtrack(start, end);
-                return path;
+                pathList.Add(path);
+
+                if(pathList.Count >= 2){
+                    return pathList;
+                }
             }
 
             foreach (Node neighbor in current.neighboursList){
@@ -43,9 +53,9 @@ public class Astar {
                     }
                 }
             }
-
         }
         Debug.Log("FindPath exited without a valid path");
+        Debug.Log(end.position);
         return null;
     }
 
@@ -69,7 +79,7 @@ public class Astar {
     static int GetDistance(Node A, Node B){
         int x = Mathf.Abs((int)B.position.x - (int)A.position.x);
         int y = Mathf.Abs((int)B.position.z - (int)A.position.z);
-        return x + (y);
+        return x + y;
     } 
     
 }

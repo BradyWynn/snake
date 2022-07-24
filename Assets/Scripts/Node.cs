@@ -9,6 +9,7 @@ public class Node {
     public int gCost;
     public int hCost; 
     public bool isSnake;
+    public bool isApple;
     public Node parent;
     // public Node(Vector3 _position, List<Node> _neighboursList){
     //     position = _position;
@@ -23,13 +24,13 @@ public class Node {
         if(i + sideLength < sideLength * sideLength){
             neighboursList.Add(graph[i + sideLength]);
         }
-        if(i - sideLength > 0){
+        if(i - sideLength >= 0){
             neighboursList.Add(graph[i - sideLength]);
         }
         if(i + 1 < sideLength * sideLength && i % sideLength != sideLength - 1){
             neighboursList.Add(graph[i + 1]);
         }
-        if(i - 1 > 0 && i % sideLength != 0){
+        if(i - 1 >= 0 && i % sideLength != 0){
             neighboursList.Add(graph[i - 1]);
         }
     }
