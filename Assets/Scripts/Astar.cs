@@ -2,12 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Astar {
+public class Astar{
     // much of the code below is adapted from the sudo code
     // presented in this video https://www.youtube.com/watch?v=mZfyt03LDH4
     // GraphTwo graph = new GraphTwo(9);
-    public static List<List<Node>> FindPath(Node start, Node end){
-        List<List<Node>> pathList = new List<List<Node>>();
+    public static List<Node> FindPath(Node start, Node end){
+        // List<List<Node>> pathList = new List<List<Node>>();
         List<Node> open = new List<Node>();
         List<Node> closed = new List<Node>();
         open.Add(start);
@@ -23,29 +23,31 @@ public class Astar {
             closed.Add(current);
 
             // check if at end
-            // if(current == end){
-            //     List<Node> path = Backtrack(start, end);
-            //     return path;
-            // }
-
             if(current == end){
                 List<Node> path = Backtrack(start, end);
-                pathList.Add(path);
-
-                if(pathList.Count >= 2){
-                    return pathList;
-                }
+                return path;
             }
+
+            // if(current == end){
+            //     Backtrack(start, end);
+            //     // List<Node> path = Backtrack(start, end);
+            //     // pathList.Add(path);
+            //     // current = start;
+
+            //     // if(pathList.Count >= 1){
+            //     //     return pathList;
+            //     // }
+            // }
 
             foreach (Node neighbor in current.neighboursList){
                 if (closed.Contains(neighbor)){
                     continue;
                 }
 
-                int newMove = current.gCost + GetDistance(current, neighbor);
+                int newMove = current.gCost + GetDistanceOctile(current, neighbor);
                 if(newMove < neighbor.gCost || !open.Contains(neighbor)){
                     neighbor.gCost = newMove;
-                    neighbor.hCost = GetDistance(neighbor, end);
+                    neighbor.hCost = GetDistanceOctile(neighbor, end);
                     neighbor.parent = current;
 
                     if(!open.Contains(neighbor)){
@@ -76,10 +78,26 @@ public class Astar {
         return path;
     }
 
-    static int GetDistance(Node A, Node B){
+    static int GetDistanceManhattan(Node A, Node B){
         int x = Mathf.Abs((int)B.position.x - (int)A.position.x);
         int y = Mathf.Abs((int)B.position.z - (int)A.position.z);
         return x + y;
     } 
+
+    static int GetDistanceEuclidean(Node A, Node B){
+        Vector3 posOne = A.position;
+        Vector3 posTwo = B.position;
+        return (int)Vector3.Distance(posOne, posTwo);
+    }
+
+    static int GetDistanceOctile(Node A, Node B){
+        int x = Mathf.Abs((int)B.position.x - (int)A.position.x);
+        int y = Mathf.Abs((int)B.position.z - (int)A.position.z);
+
+        if(x > y){
+            return (int)(14 * y) + 10 * (x - y);
+        }
+        return (int)(14 * y) + 10 * (y - x);
+    }
     
 }

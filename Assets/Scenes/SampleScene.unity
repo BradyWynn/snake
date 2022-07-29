@@ -133,6 +133,7 @@ GameObject:
   m_Component:
   - component: {fileID: 476145391}
   - component: {fileID: 476145388}
+  - component: {fileID: 476145392}
   m_Layer: 0
   m_Name: snake
   m_TagString: Untagged
@@ -147,21 +148,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 476145387}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e75c7284d742f17498e0a8ba2ec487ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  graphSize: 0
-  speed: 0.005
   applesEaten: 0
-  dir: {x: 0, y: 0, z: 0}
   count: 0
-  applePrefab: {fileID: 2068117897081538643, guid: 8dff5d8557be2094aa41cbc4f2c6d429, type: 3}
-  snakeBodyPrefab: {fileID: 1063314803489656747, guid: 679d3685b92974d4083484ef2b6c3753, type: 3}
-  currentApple: {fileID: 0}
-  snakeObj: []
-  eatenAppleThisStep: 0
 --- !u!4 &476145391
 Transform:
   m_ObjectHideFlags: 0
@@ -177,6 +170,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &476145392
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 476145387}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d203743e09b80a4a8568b01072a7b61, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  snakeObj: []
+  count: 0
+  snakeBodyPrefab: {fileID: 1063314803489656747, guid: 679d3685b92974d4083484ef2b6c3753, type: 3}
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0

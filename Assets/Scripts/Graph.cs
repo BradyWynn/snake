@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class Graph {
     public List<Node> graph = new List<Node>();
+    public int sideLength;
     public List<Node> snakeNodes = new List<Node>();
     public Node apple = new Node();
-    public Graph(int sideLength){
+    public Graph(int _sideLength){
+        sideLength = _sideLength;
         for (int i = 0; i < sideLength*sideLength; i++){
             Node node = new Node();
             graph.Add(node);
@@ -49,7 +51,7 @@ public class Graph {
     //     return travesability/samples;
     // }
 
-    public void RepairGraph(List<Node> snakeNodes){
+    public void RepairGraph(){
         // updates all the connections to the tail of the snake
         Node tail = snakeNodes[0];
         int i = tail.num;
@@ -57,28 +59,39 @@ public class Graph {
         tail.neighboursList.Clear();
 
         tail.ResetBothNeighboursList(i, sideLength, graph);
+        // foreach(Node snakeBody in snakeNodes){
+        //    snakeBody.ResetBothNeighboursList(snakeBody.num, sideLength, graph); 
+        // }
     }
 
-    public void UpdateGraph(List<Node> snakeNodes){
+    public void UpdateGraph(){
         List<Node> NodesToDelete = new List<Node>();
 
         // deletes all the connects inside the snake on the graph preventing it from generating paths that cross itself
-        foreach (Node snakeBody in snakeNodes){
-            if(snakeBody != snakeNodes[snakeNodes.Count - 1]){
-                foreach (Node neighbor in snakeBody.neighboursList){
-                    foreach (Node bodyPiece in snakeNodes){
-                        if(neighbor.position == bodyPiece.position){
-                        }
-                        else{
-                            NodesToDelete.Add(neighbor);
-                        }
-                    }
-                }
-                foreach(Node delete in NodesToDelete){
-                    snakeBody.neighboursList.Remove(delete);
-                    delete.neighboursList.Remove(snakeBody);
-                }
-            }
+        // foreach (Node snakeBody in snakeNodes){
+        //     if(snakeBody != snakeNodes[snakeNodes.Count - 1]){
+        //         foreach (Node neighbor in snakeBody.neighboursList){
+        //             foreach (Node bodyPiece in snakeNodes){
+        //                 if(neighbor.position == bodyPiece.position){
+        //                 }
+        //                 else{
+        //                     NodesToDelete.Add(neighbor);
+        //                 }
+        //             }
+        //         }
+        //         foreach(Node delete in NodesToDelete){
+        //             snakeBody.neighboursList.Remove(delete);
+        //             delete.neighboursList.Remove(snakeBody);
+        //         }
+        //     }
+        // }
+        Node head = snakeNodes[snakeNodes.Count - 1];
+        foreach(Node neighbor in head.neighboursList){
+            NodesToDelete.Add(neighbor);
+        }
+        foreach(Node delete in NodesToDelete){
+            head.neighboursList.Remove(delete);
+            delete.neighboursList.Remove(head);
         }
     }
 
@@ -90,11 +103,10 @@ public class Graph {
         // }
         int x = (int)pos.x;
         int y = (int)pos.z;
-        Debug.Log("You called PosToNode but no Node has that position");
-        return null;
+        return graph[(x * sideLength) + y];
     } 
 
-    void SpawnApple(){
+    public void SpawnApple(){
         float x = Random.Range(0, 30);
         float y = Random.Range(0, 30);
         
@@ -105,33 +117,38 @@ public class Graph {
             }
         }
         apple = PosToNode(new Vector3(x, 0, y));
-        apple.position = new Vector3(x, 0, y);
+        // apple.position = new Vector3(x, 0, y);
     }
-    void AppleCheck(Vector3 currentPos){
-        if(currentPos == apple.position){
+    public List<Node> AppleCheck(Node currentPos, int count){
+        if(currentPos == apple){
+            // count = 0;
             // applesEaten++;
             // eatenAppleThisStep = true;
-            Extend();
+            Extend(currentPos);
             SpawnApple(); 
+            Debug.Log("ran");
+
+            List<Node> path = Astar.FindPath(snakeNodes[snakeNodes.Count - 1], apple);
+            return path;
         }
+        else{
+            UpdateBody(currentPos);
+        }
+        return null;
     }
 
-    void Extend(){
-        Node newNode = PosToNode(transform.localPosition, graph.graph);
-        snakeNodes.Add(newNode);
-        newNode.isSnake = true;
+    public void Extend(Node currentPos){
+        snakeNodes.Add(currentPos);
+        currentPos.isSnake = true;
 
-        GameObject piece = Instantiate(snakeBodyPrefab, transform.localPosition, Quaternion.identity);
-        snakeObj.Add(piece);
+        // GameObject piece = Instantiate(snakeBodyPrefab, transform.localPosition, Quaternion.identity);
+        // snakeObj.Add(piece);
     }
 
-    void UpdateBody(){
+    public void UpdateBody(Node currentPos){
         // if the player hasn't eaten an apple this step then move butt to front
-         if(eatenAppleThisStep == false){
-            Node butt = snakeNodes[0];
-            Node newHead = PosToNode(transform.localPosition, graph.graph);
-            snakeNodes.Remove(butt);
-            snakeNodes.Add(newHead);
-         }
+        Node butt = snakeNodes[0];
+        snakeNodes.Remove(butt);
+        snakeNodes.Add(currentPos);
     }
 }

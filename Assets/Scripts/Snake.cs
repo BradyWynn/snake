@@ -6,70 +6,52 @@ public class Snake : MonoBehaviour{
     public int applesEaten = 0;
     // public Vector3 dir = Vector3.zero;
     public int count = 0;
-    public GameObject applePrefab;
-    public GameObject snakeBodyPrefab;
-    public Node appleNode;
-    public GameObject appleObj;
-    public List<GameObject> snakeObj = new List<GameObject>();
+    // public GameObject applePrefab;
+    // public GameObject snakeBodyPrefab;
+    // public GameObject appleObj;
+    // public List<GameObject> snakeObj = new List<GameObject>();
     // public List<Node> snakeNodes = new List<Node>();
-    public bool eatenAppleThisStep;
-    // Graph graph = new Graph(31);
+    // public bool eatenAppleThisStep;
+    Graph graph = new Graph(31);
+    List<Node> path = new List<Node>();
+    int slowerdowner = 0;
 
     void Start(){
-        Extend();
-        appleObj = Instantiate(applePrefab, new Vector3(25, 0, 15), Quaternion.identity);
-        appleNode = PosToNode(new Vector3(25, 0, 15), graph.graph);
-        SpawnApple();
+        Node startingPos = graph.PosToNode(transform.position);
+        graph.Extend(startingPos);
+        // appleObj = Instantiate(applePrefab, new Vector3(25, 0, 15), Quaternion.identity);
+        // appleNode = PosToNode(new Vector3(25, 0, 15), graph.graph);
+        graph.SpawnApple();
+        path = Astar.FindPath(graph.snakeNodes[graph.snakeNodes.Count - 1], graph.apple);
     }
 
     void Update(){
-        // eatenAppleThisStep = false;
-        // RenderSnake();
+        if(slowerdowner % 50 == 0){
+            // RenderSnake();
 
-        // if(applesEaten > 1){
-        //     UpdateGraph();
-        // }
-        // DrawConnections();
+            if(graph.snakeNodes.Count > 1){
+                graph.UpdateGraph();
+            }
 
-        // for (int i = 0; i < 899; i++){
-        //     if(applesEaten > -1){
-        //         float score = graph.Evaluate(appleNode.position, snakeNodes);
-        //         // Debug.Log(score);
-        //     }
-        // }
 
-        Debug.Log("done");
-        Debug.Break();
+            List<Node> returned = graph.AppleCheck(path[count], count);
+            graph.RepairGraph();
+            if(returned != null){
+                path = returned;
+                count = 0;
+            }
+            DrawConnections();
 
-        // if(Input.GetKey(KeyCode.W))
-        //     dir = transform.forward;
-        // if(Input.GetKey(KeyCode.S))
-        //     dir = -transform.forward;
-        // if(Input.GetKey(KeyCode.D))
-        //     dir = transform.right;
-        // if(Input.GetKey(KeyCode.A)) 
-        //     dir = -transform.right;
-
-        // List<Node> path = Astar.FindPath(snakeNodes[snakeNodes.Count - 1], PosToNode(currentApple.transform.localPosition, graph.graph));
-
-        // if(count % 5 == 0){
-        //     // transform.localPosition = (transform.localPosition + dir);
-        //     transform.localPosition = path[0].position;
-        //     RepairGraph();
-
-        //     // for(int i = 0; i < snakeObj.Count - 1; i++){ // subtract one from count because top of the list is always going to be head and the head can't hit the head
-        //     //     if(snakeObj[i].transform.localPosition == transform.localPosition){
-        //     //         Debug.Break();
-        //     //         Debug.Log("hit self");
-        //     //     }
-        //     // }
-        //     AppleCheck();
-        //     UpdateBody();
-            
-        //     count = 0;
-        // }
-        // count++;
+            count++;
+        }
+        slowerdowner++;
     }
+    // void OnDrawGizmos(){
+    //     // Draw a semitransparent blue cube at the transforms position
+    //     foreach(Node snakeBody in graph.snakeNodes){
+    //         Gizmos.DrawCube(snakeBody.position, new Vector3(1, 1, 1));
+    //     }
+    // }
 
     // void SpawnApple(){
     //     float x = Random.Range(0, 30);
@@ -139,14 +121,14 @@ public class Snake : MonoBehaviour{
     void DrawConnections(){
         foreach (Node node in graph.graph){
             foreach (Node neighbor in node.neighboursList){
-                Debug.DrawLine(node.position, neighbor.position, Color.blue, .2f);
+                Debug.DrawLine(node.position, neighbor.position, Color.blue, .1f);
             }
         }
     }
 
-    void RenderSnake(){
-        for (int i = 0; i < snakeNodes.Count; i++){
-            snakeObj[i].transform.position = snakeNodes[i].position;
-        }
-    }
+    // void RenderSnake(){
+    //     for (int i = 0; i < graph.snakeNodes.Count; i++){
+    //         snakeObj[i].transform.position = graph.snakeNodes[i].position;
+    //     }
+    // }
 }
