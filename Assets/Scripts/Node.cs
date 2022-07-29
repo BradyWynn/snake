@@ -37,22 +37,18 @@ public class Node {
 
     public void ResetBothNeighboursList(int i, int sideLength, List<Node> graph){
         if(i + sideLength < sideLength * sideLength){
-            // adjMat[i, i + sideLength] = true;
             neighboursList.Add(graph[i + sideLength]);
             graph[i + sideLength].neighboursList.Add(graph[i]);
         }
         if(i - sideLength > 0){
-            // adjMat[i, i - sideLength] = true;
             neighboursList.Add(graph[i - sideLength]);
             graph[i - sideLength].neighboursList.Add(graph[i]);
         }
         if(i + 1 < sideLength * sideLength && i % sideLength != sideLength - 1){
-            // adjMat[i, i + 1] = true;
             neighboursList.Add(graph[i + 1]);
             graph[i + 1].neighboursList.Add(graph[i]);
         }
         if(i - 1 > 0 && i % sideLength != 0){
-            // adjMat[i, i - 1] = true;
             neighboursList.Add(graph[i - 1]);
             graph[i - 1].neighboursList.Add(graph[i]);
         }

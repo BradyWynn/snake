@@ -32,83 +32,103 @@ public class Monte : MonoBehaviour{
     public void Update(){
         
         if(count % 100 == 0){
+            lastPath = path; 
             // this function should take in a board state with an apple and play the game randomly until it ends and returns a score 
             // while(locGra.snakeNodes.Count < 4){ // while there are valid moves available 
-                List<Node> NodesToDelete = new List<Node>();
+            locGra.SpawnApple();
+            List<Node> NodesToDelete = new List<Node>();
 
-                // deletes all the connects inside the snake on the graph preventing it from generating paths that cross itself
-                foreach (Node snakeBody in locGra.snakeNodes){
-                    if(snakeBody != locGra.snakeNodes[locGra.snakeNodes.Count - 1]){
-                        foreach (Node neighbor in snakeBody.neighboursList){
-                            foreach (Node bodyPiece in locGra.snakeNodes){
-                                if(neighbor.position == bodyPiece.position){
-                                }
-                                else{
-                                    NodesToDelete.Add(neighbor);
-                                }
+            // deletes all the connects inside the snake on the graph preventing it from generating paths that cross itself
+            foreach (Node snakeBody in locGra.snakeNodes){
+                if(snakeBody != locGra.snakeNodes[locGra.snakeNodes.Count - 1]){
+                    foreach (Node neighbor in snakeBody.neighboursList){
+                        foreach (Node bodyPiece in locGra.snakeNodes){
+                            if(neighbor.position == bodyPiece.position){
+                            }
+                            else{
+                                NodesToDelete.Add(neighbor);
                             }
                         }
-                        foreach(Node delete in NodesToDelete){
-                            snakeBody.neighboursList.Remove(delete);
-                            delete.neighboursList.Remove(snakeBody);
-                        }
+                    }
+                    foreach(Node delete in NodesToDelete){
+                        snakeBody.neighboursList.Remove(delete);
+                        delete.neighboursList.Remove(snakeBody);
                     }
                 }
-                DrawConnections(); 
+            }
+            DrawConnections(); 
 
-                path = Astar.FindPath(locGra.snakeNodes[locGra.snakeNodes.Count - 1], locGra.apple);
-                if(path == null){
-                    Debug.Break();
-                }
-                // string output = "";
-                // foreach(Node node in path){
-                //     output = output + node.position;
-                // }
-                // Debug.Log(output);
-                // return 2;
+            path = Astar.FindPath(locGra.snakeNodes[locGra.snakeNodes.Count - 1], locGra.apple);
+            if(path == null){
+                Debug.Break();
+            }
+            // string output = "";
+            // foreach(Node node in path){
+            //     output = output + node.position;
+            // }
+            // Debug.Log(output);
 
-                // for (int i = locGra.snakeNodes.Count - 1; i > 0; i--){
+            Node temp = new Node();
+            locGra.snakeNodes.Add(temp);
+            
+            GameObject piece = Instantiate(snakeBodyPrefab, transform.localPosition, Quaternion.identity);
+            snakeObj.Add(piece);
+
+            foreach(Node snakeBody in locGra.snakeNodes){
+                snakeBody.ResetBothNeighboursList(snakeBody.num, locGra.sideLength, locGra.graph); 
+            }
+
+
+            // for (int i = locGra.snakeNodes.Count - 1; i >= 0; i--){
+            //     if(i > locGra.snakeNodes.Count - 1  - path.Count - 1){ // if the current snakeNode is greater than snake nodes minus path count 
+            //         Debug.Log(locGra.snakeNodes.Count + ": snakeNodes count");
+            //         Debug.Log(path.Count + ": path count");
+            //         Debug.Log(i + ": i count");
+            //         locGra.snakeNodes[i] = path[(path.Count - (locGra.snakeNodes.Count - i))]; 
+            //     }
+            //     else{
+            //         locGra.snakeNodes[i] = lastPath[lastPath.Count - 1 - (locGra.snakeNodes.Count - 1 - i)];
+            //     }
+            // }
+            for (int i = 0; i < locGra.snakeNodes.Count; i++){
+                // if(i > locGra.snakeNodes.Count - path.Count){
+                //     locGra.snakeNodes[i] = path[i];
                 //     Debug.Log(i);
-                //     locGra.snakeNodes[i] = path[path.Count - (locGra.snakeNodes.Count - i)];
                 // }
-
-                // locGra.Extend(path[0]);
-                Node temp = new Node();
-                locGra.snakeNodes.Add(temp);
-                
-                GameObject piece = Instantiate(snakeBodyPrefab, transform.localPosition, Quaternion.identity);
-                snakeObj.Add(piece);
-
-                foreach(Node snakeBody in locGra.snakeNodes){
-                    snakeBody.ResetBothNeighboursList(snakeBody.num, locGra.sideLength, locGra.graph); 
-                }
-
-                // for (int i = 0; i < path.Count; i++){ // loop through every single element in path 
-                //     if(i < locGra.snakeNodes.Count){ // only proceed if its less than the number of nodes
-                //         locGra.snakeNodes[locGra.snakeNodes.Count -  i - 1] = path[path.Count - i - 1];
-                //     }
+                // else{
+                //     locGra.snakeNodes[i] = lastPath[lastPath.Count - i - 1];
                 // }
-                // for (int i = 0; i < locGra.snakeNodes.Count; i++){
-                //     if(locGra.snakeNodes.Count - i < path.Count){
-                //         locGra.snakeNodes[i] = lastPath[i];
-                //     }
-                // }
-
-                for (int i = locGra.snakeNodes.Count - 1; i >= 0; i--){
-                    if(i > locGra.snakeNodes.Count - 1  - path.Count - 1){
-                       locGra.snakeNodes[i] = path[path.Count - 1 - (locGra.snakeNodes.Count - 1 - i)]; 
+                if(locGra.snakeNodes.Count > path.Count){
+                    if(i >= (locGra.snakeNodes.Count - 1) - (path.Count - 1)){
+                        locGra.snakeNodes[i] = path[i - (locGra.snakeNodes.Count - path.Count)];
                     }
                     else{
-                        locGra.snakeNodes[i] = lastPath[lastPath.Count - 1 - (locGra.snakeNodes.Count - 1 - i)];
-                    }
-                }
+                        try
+                        {
+                            locGra.snakeNodes[i] = lastPath[i + (lastPath.Count - (locGra.snakeNodes.Count - path.Count))];
+                        }
+                        catch (System.Exception)
+                        {
+                            Debug.Log(lastPath.Count + ": lastPath count");
+                            Debug.Log(i + ": i ");
+                            Debug.Log(locGra.snakeNodes.Count + ": snakeNodes count");
+                            Debug.Log(path.Count + ": path count");
+                            Debug.Break();
+                            throw;
+                        }
 
-                locGra.SpawnApple();
-                
-                Debug.Log(path.Count);
-                Debug.Log(lastPath.Count);
-                RenderSnake();
-                lastPath = path; 
+                    }
+                    // if(i == locGra.snakeNodes.Count - path.Count){
+                    //     Debug.Log("paoin    ");
+                    // }
+                }
+                else{
+                    locGra.snakeNodes[i] = path[i + (path.Count - locGra.snakeNodes.Count)];
+                }
+            }
+            
+            RenderSnake();
+            // lastPath = path; 
         }
         count++;
     }

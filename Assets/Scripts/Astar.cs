@@ -44,10 +44,10 @@ public class Astar{
                     continue;
                 }
 
-                int newMove = current.gCost + GetDistanceOctile(current, neighbor);
+                int newMove = current.gCost + GetDistanceEuclidean(current, neighbor);
                 if(newMove < neighbor.gCost || !open.Contains(neighbor)){
                     neighbor.gCost = newMove;
-                    neighbor.hCost = GetDistanceOctile(neighbor, end);
+                    neighbor.hCost = GetDistanceEuclidean(neighbor, end);
                     neighbor.parent = current;
 
                     if(!open.Contains(neighbor)){
@@ -58,6 +58,7 @@ public class Astar{
         }
         Debug.Log("FindPath exited without a valid path");
         Debug.Log(end.position);
+        Debug.Log(end.neighboursList.Count);
         return null;
     }
 
@@ -70,11 +71,11 @@ public class Astar{
             _current = _current.parent;
         }
         path.Reverse();
-        // for (int i = 0; i < path.Count; i++){
-        //     if(i < path.Count - 1){
-        //         Debug.DrawLine(path[i].position, path[i + 1].position, Color.red, 1);
-        //     }
-        // }
+        for (int i = 0; i < path.Count; i++){
+            if(i < path.Count - 1){
+                Debug.DrawLine(path[i].position, path[i + 1].position, Color.red, 1);
+            }
+        }
         return path;
     }
 
