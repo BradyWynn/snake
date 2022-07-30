@@ -103,7 +103,7 @@ public class Graph {
         // }
         int x = (int)pos.x;
         int y = (int)pos.z;
-        return graph[(x * sideLength) + y];
+        return graph[(y * sideLength) + x];
     } 
 
     public void SpawnApple(){

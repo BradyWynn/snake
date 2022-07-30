@@ -10,7 +10,7 @@ public class Monte : MonoBehaviour{
      public int count = 0;
      public GameObject snakeBodyPrefab;
      List<Node> path = new List<Node>();
-     List<Node> lastPath = new List<Node>();
+    //  List<Node> lastPath = new List<Node>();
     private void Start() {
         locGra = graph;
         graph.SpawnApple();
@@ -32,10 +32,9 @@ public class Monte : MonoBehaviour{
     public void Update(){
         
         if(count % 100 == 0){
-            lastPath = path; 
+            // lastPath = path; 
             // this function should take in a board state with an apple and play the game randomly until it ends and returns a score 
             // while(locGra.snakeNodes.Count < 4){ // while there are valid moves available 
-            locGra.SpawnApple();
             List<Node> NodesToDelete = new List<Node>();
 
             // deletes all the connects inside the snake on the graph preventing it from generating paths that cross itself
@@ -72,6 +71,7 @@ public class Monte : MonoBehaviour{
             locGra.snakeNodes.Add(temp);
             
             GameObject piece = Instantiate(snakeBodyPrefab, transform.localPosition, Quaternion.identity);
+            piece.name = locGra.snakeNodes.Count.ToString();
             snakeObj.Add(piece);
 
             foreach(Node snakeBody in locGra.snakeNodes){
@@ -79,56 +79,64 @@ public class Monte : MonoBehaviour{
             }
 
 
-            // for (int i = locGra.snakeNodes.Count - 1; i >= 0; i--){
-            //     if(i > locGra.snakeNodes.Count - 1  - path.Count - 1){ // if the current snakeNode is greater than snake nodes minus path count 
-            //         Debug.Log(locGra.snakeNodes.Count + ": snakeNodes count");
-            //         Debug.Log(path.Count + ": path count");
-            //         Debug.Log(i + ": i count");
-            //         locGra.snakeNodes[i] = path[(path.Count - (locGra.snakeNodes.Count - i))]; 
+            // for (int i = 0; i < locGra.snakeNodes.Count; i++){
+            //     if(locGra.snakeNodes.Count > path.Count){
+            //         if(i >= (locGra.snakeNodes.Count - 1) - (path.Count - 1)){
+            //             locGra.snakeNodes[i] = path[i - (locGra.snakeNodes.Count - path.Count)];
+            //         }
+            //         else{
+            //             try
+            //             {
+            //                 locGra.snakeNodes[i] = lastPath[i + (lastPath.Count - (locGra.snakeNodes.Count - path.Count))];
+            //             }
+            //             catch (System.Exception)
+            //             {
+            //                 Debug.Log(lastPath.Count + ": lastPath count");
+            //                 Debug.Log(i + ": i ");
+            //                 Debug.Log(locGra.snakeNodes.Count + ": snakeNodes count");
+            //                 Debug.Log(path.Count + ": path count");
+            //                 Debug.Break();
+            //                 throw;
+            //             }
+
+            //         }
             //     }
             //     else{
-            //         locGra.snakeNodes[i] = lastPath[lastPath.Count - 1 - (locGra.snakeNodes.Count - 1 - i)];
+            //         locGra.snakeNodes[i] = path[i + (path.Count - locGra.snakeNodes.Count)];
             //     }
             // }
-            for (int i = 0; i < locGra.snakeNodes.Count; i++){
-                // if(i > locGra.snakeNodes.Count - path.Count){
-                //     locGra.snakeNodes[i] = path[i];
-                //     Debug.Log(i);
-                // }
-                // else{
-                //     locGra.snakeNodes[i] = lastPath[lastPath.Count - i - 1];
-                // }
-                if(locGra.snakeNodes.Count > path.Count){
-                    if(i >= (locGra.snakeNodes.Count - 1) - (path.Count - 1)){
-                        locGra.snakeNodes[i] = path[i - (locGra.snakeNodes.Count - path.Count)];
-                    }
-                    else{
-                        try
-                        {
-                            locGra.snakeNodes[i] = lastPath[i + (lastPath.Count - (locGra.snakeNodes.Count - path.Count))];
-                        }
-                        catch (System.Exception)
-                        {
-                            Debug.Log(lastPath.Count + ": lastPath count");
-                            Debug.Log(i + ": i ");
-                            Debug.Log(locGra.snakeNodes.Count + ": snakeNodes count");
-                            Debug.Log(path.Count + ": path count");
-                            Debug.Break();
-                            throw;
-                        }
+            int snakeNodeSize = locGra.snakeNodes.Count;
+            int pathSize = path.Count;
 
-                    }
-                    // if(i == locGra.snakeNodes.Count - path.Count){
-                    //     Debug.Log("paoin    ");
-                    // }
+            if(snakeNodeSize > pathSize){
+                for (int x = 0; x < snakeNodeSize - pathSize; x++){
+                    locGra.snakeNodes[x] = locGra.snakeNodes[x + pathSize - 1];
                 }
-                else{
-                    locGra.snakeNodes[i] = path[i + (path.Count - locGra.snakeNodes.Count)];
+                for (int i = 0; i < pathSize; i++){
+                    try{
+                        locGra.snakeNodes[i + (snakeNodeSize - pathSize)] = path[i];
+                    }
+                    catch (System.Exception){
+                        Debug.Log(i + ": i");
+                        Debug.Log(pathSize + ": pathsize");
+                        Debug.Log(snakeNodeSize + ": snakenodeSize");
+                        Debug.Break();
+                        throw;
+                    }
                 }
             }
+            else{
+                for (int i = 0; i < snakeNodeSize; i++){
+                   locGra.snakeNodes[i] = path[i + (pathSize - snakeNodeSize)]; 
+                }
+            }
+
+            // Debug.Log(back.Count);
+            // Debug.Log(pathSize + ": pathsize");
+            // Debug.Log(snakeNodeSize + ": snakenodeSize");
             
             RenderSnake();
-            // lastPath = path; 
+            locGra.SpawnApple();
         }
         count++;
     }
