@@ -5,8 +5,8 @@
 #include <stdbool.h>
 #include <time.h>
 
-// int euclidian(int[], int[]);
-int bfs(int[2], int[2], int[900][2], int);
+int euclidian(int[], int[]);
+int bfs(int[2], int[2], int[900][2], int, int[900][2]);
 void getNeighbors(int[], int[900][2], int[4][2], int);
 
 typedef struct node
@@ -17,6 +17,7 @@ typedef struct node
 } node;
 
 int snake[900][2];
+int path[900][2];
 int length = 1;
 
 int main(){
@@ -26,10 +27,16 @@ int main(){
 	snake[0][1] = 1;
 
 	int start[] = {0, 0};
-	int end[] = {10, 2};
-	int a = bfs(start, end, snake, length);
+	int end[] = {29, 29};
+	int a = bfs(start, end, snake, length, path);
+	for(int i = 0; i < a; i++){
+		printf("%d", path[i][0]);
+		printf(" ");
+		printf("%d", path[i][1]);
+		printf("\n");
+	}
 
-	printf("%d", a);
+	// printf("%d", a);
 
 	// clock_t toc = clock();
     // printf("Elapsed: %f seconds\n", (toc - tic) / CLOCKS_PER_SEC);
@@ -57,31 +64,11 @@ int main(){
 //         for i, piece in enumerate(snake):
 //             snake[i] = path[i]
 
-// def BFS(start, end, snake, n):
-//     paths = []
-//     tree = [Node(start, 0, [], euclidian(start, end))]
-//     while len(tree) != 0:
-//         min_val = 1000000
-//         min_node = None
-//         for i in tree:
-//             if i.depth + i.h < min_val:
-//                 min_val = i.depth + i.h
-//                 min_node = i
-//         current = min_node
-//         if current.value == end:
-//             paths.append(list(reversed(current.path)))
-//         if len(paths) == n:
-//             return paths
-//         neighbors = get_neighbors(current.value, snake, current.depth)
-//         for neighbor in neighbors:
-//             if neighbor is not None:
-//                 node = Node(neighbor, current.depth + 1, current.path, euclidian(neighbor, end))
-//                 if node not in tree and neighbor not in current.path:
-//                     tree.append(node)
-//         tree.remove(current)
-//     return paths
+// void gameSim(){
 
-int bfs(int start[2], int end[2], int snake[900][2], int length){
+// }
+
+int bfs(int start[2], int end[2], int snake[900][2], int length, int path[900][2]){
 	int treeSize = 1;
 	int queueSize = 1;
 	int neighbors[4][2];
@@ -89,7 +76,7 @@ int bfs(int start[2], int end[2], int snake[900][2], int length){
 	node **queue = (node **)malloc(sizeof(node *)); // dynamic array of pointers to non-evaluated nodes
 	node head = {{0, 0}, NULL, 0};
 	tree[0] = head;
-	queue[0] = &head;
+	queue[0] = &tree[0];
 	while (queueSize != 0){
 		for (int r = 0; r < 4; r++){
 			for (int c = 0; c < 2; c++){
@@ -97,16 +84,32 @@ int bfs(int start[2], int end[2], int snake[900][2], int length){
 			}
 		}
 		// get lowest value node from queue
-		node *current = queue[0];
-		printf("%d", (*current).value[0]);
-		printf(" ");
-		printf("%d", (*current).value[1]);
-		printf("\n");
+		int lowestIndex = -1;
+		int lowestValue = 1000;
+		for(int i = 0; i < queueSize; i++){
+			if(lowestValue > euclidian((*queue[i]).value, end)){
+				lowestIndex = i;
+				lowestValue = euclidian((*queue[i]).value, end);
+			}
+		}
+		node *current = queue[lowestIndex];
+		// printf("%d", (*current).value[0]);
+		// printf(" ");
+		// printf("%d", (*current).value[1]);
+		// printf("\n");
 		if ((*current).value[0] == end[0] && (*current).value[1] == end[1]){
+			int depth = (*current).depth;
+			int count = 0;
+			for(int x = 0; x < depth; x++){
+				memcpy(&current, &((*current).parent), sizeof(node *));
+				path[count][0] = (*current).value[0];
+				path[count][1] = (*current).value[1];
+				count++;
+			}
 			printf("path found");
 			free(tree);
 			free(queue);
-			return 1;
+			return depth;
 		}
 		getNeighbors((*current).value, snake, neighbors, length);
 		for (int i = 0; i < 4; i++){
@@ -114,7 +117,7 @@ int bfs(int start[2], int end[2], int snake[900][2], int length){
 				bool add = true;
 				node neighbor = {{neighbors[i][0], neighbors[i][1]}, &(*current), (*current).depth + 1};
 				for (int y = 0; y < treeSize; y++){ // checking the node isn't already in tree
-					if (neighbor.value[0] == tree[y].value[0] && neighbor.value[0] == tree[y].value[0] && neighbor.depth == tree[y].depth){
+					if (neighbor.value[0] == tree[y].value[0] && neighbor.value[1] == tree[y].value[1] && neighbor.depth == tree[y].depth){
 						add = false;
 						break;
 					}
@@ -139,8 +142,6 @@ int bfs(int start[2], int end[2], int snake[900][2], int length){
 				        add = false;
 				        break;
 				    }
-					// p_parent = (*p_parent).parent;
-					// printf("%p", p_parent);
 				}
 				if (add){
 					treeSize++;
@@ -153,7 +154,7 @@ int bfs(int start[2], int end[2], int snake[900][2], int length){
 		}
 		int index = -1;
 		for (int i = 0; i < queueSize; i++){ // get index of current in queue
-			if ((*current).value[0] == (*queue)[i].value[0] && (*current).value[1] == (*queue)[i].value[1] && (*current).depth == (*queue)[i].depth){
+			if (current == queue[i]){
 				index = i;
 				break;
 			}
