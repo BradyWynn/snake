@@ -16,27 +16,15 @@ typedef struct node
 	int depth;
 } node;
 
-int snake[900][2];
+
 int path[900][2];
 int length = 1;
 
 int main(){
 	// clock_t tic = clock();
 
-	snake[0][0] = 1;
-	snake[0][1] = 1;
 
-	int start[] = {0, 0};
-	int end[] = {29, 29};
-	int a = bfs(start, end, snake, length, path);
-	for(int i = 0; i < a; i++){
-		printf("%d", path[i][0]);
-		printf(" ");
-		printf("%d", path[i][1]);
-		printf("\n");
-	}
-
-	// printf("%d", a);
+	gameSim();
 
 	// clock_t toc = clock();
     // printf("Elapsed: %f seconds\n", (toc - tic) / CLOCKS_PER_SEC);
@@ -64,9 +52,37 @@ int main(){
 //         for i, piece in enumerate(snake):
 //             snake[i] = path[i]
 
-// void gameSim(){
+void gameSim(){
+	int snake[900][2];
+	int path[900][2];
+	int dataset[900][900][2];
+	int apple[2];
+	int moves = 0;
+	for(int i = 0; i < 900; i++){
+		for(int x = 0; x < i; x++){ // copy snake into dataset
+			dataset[i][x][0] = snake[x][0];
+			dataset[i][x][1] = snake[x][1];
+		}
+		while(true){ // generate apple position
+			bool inSnake = false;
+			apple[0] = rand() * 30;
+			apple[1] = rand() * 30;
+			for(int y =length 0; y < i; y++){
+				if(snake[y][0] == apple[0] && snake[y][1] == apple[1]){
+					inSnake = true;
+				}
+			}
+			if(inSnake){
 
-// }
+				break;
+			}
+		}
+		int result = bfs(snake[0], apple, snake, i, path);
+		if(result == 0){
+			break;
+		}
+	}
+}
 
 int bfs(int start[2], int end[2], int snake[900][2], int length, int path[900][2]){
 	int treeSize = 1;
