@@ -5,7 +5,7 @@
 #include <stdbool.h>
 #include <time.h>
 
-int gameSim(int ***);
+int gameSim(int *);
 double euclidian(int[], int[]);
 int bfs(int[2], int[2], int[900][2], int, int[900][2]);
 void getNeighbors(int[], int[900][2], int[4][2], int, int);
@@ -73,7 +73,7 @@ int main(){
 //         for i, piece in enumerate(snake):
 //             snake[i] = path[i]
 
-__declspec(dllexport) int gameSim(int ***dataset){
+int gameSim(int *dataset){
 	srand((unsigned) time(NULL));
 	int snake[900][2];
 	int path[900][2];
@@ -116,7 +116,7 @@ __declspec(dllexport) int gameSim(int ***dataset){
 		// printf("\n");
 		int result = bfs(snake[0], apple, snake, epoch, path);
 		if(result == 0){
-			printf("%d", epoch);
+			// printf("%d", epoch);
 			return epoch;
 			break;
 		}
@@ -138,9 +138,10 @@ __declspec(dllexport) int gameSim(int ***dataset){
 			snake[i][0] = path[i][0];
 			snake[i][1] = path[i][1];
 		}
-		for(int x = 0; x < epoch; x++){ // copy snake into dataset
-			dataset[epoch][x][0] = snake[x][0];
-			dataset[epoch][x][1] = snake[x][1];
+		// epoch == rowIndex
+		for(int colIndex = 0; colIndex < epoch; colIndex++){ // copy snake into dataset
+			dataset[(((epoch) * (epoch + 1))/ 2 + colIndex) * 2] = snake[colIndex][0];
+			dataset[(((epoch) * (epoch + 1))/ 2 + colIndex) * 2 + 1] = snake[colIndex][1];
 		}
 	}
 	return 0;

@@ -4,6 +4,6 @@
 #include <string.h>
 #include <stdbool.h>
 
-__declspec(dllexport) void func(int ***a){
-    printf("%d", a[0][0][0]);
+void func(int *a){
+    printf("%d", a[0]);
 }
