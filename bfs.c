@@ -19,9 +19,10 @@ typedef struct node
 
 
 int main(){
+	// srand((unsigned) time(NULL));
 	// clock_t t;
 	// t = clock();
-	// int ***dataset = (int ***)malloc(sizeof(int **) * 900);
+	int *dataset = (int *)malloc(sizeof(int) * (900 * 450 * 2));
 	// for(int i = 0; i < 900; i++){
 	// 	int **a = (int **)malloc(sizeof(int *) * i);
 	// 	for(int x = 0; x < i; x++){
@@ -30,8 +31,12 @@ int main(){
 	// 	}
 	// 	dataset[i] = a;
 	// }
-
-	// int length = gameSim(dataset);
+	
+	for(int i = 0; i < 10; i++){
+		int length = gameSim(dataset);
+		printf("\n");
+		printf("%d", length);
+	}
 	// printf("\n");
 	// for(int x = 0; x < length; x++){
 	// 	for(int y = 0; y < x; y++){
@@ -74,15 +79,20 @@ int main(){
 //             snake[i] = path[i]
 
 int gameSim(int *dataset){
-	srand((unsigned) time(NULL));
 	int snake[900][2];
 	int path[900][2];
+	for(int r = 0; r < 900; r++){
+		for(int c = 0; c < 2; c++){
+			snake[r][c] = 0;
+			path[r][c] = 0;
+		}
+	}
 	snake[0][0] = 0;
 	snake[0][1] = 0;
-	int apple[2];
+	int apple[2] = {0, 0};
 	int moves = 0;
 	int length = 1;
-	for(int epoch = 0; epoch < 200; epoch++){
+	for(int epoch = 0; epoch < 900; epoch++){
 		// printf("[");
 		// for(int i = 0; i < length; i++){
 		// 	printf("(");

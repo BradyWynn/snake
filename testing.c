@@ -4,6 +4,6 @@
 #include <string.h>
 #include <stdbool.h>
 
-void func(int *a){
-    printf("%d", a[0]);
+int func(int a){
+    return a * 2;
 }
